@@ -45,7 +45,7 @@ public class GuiWindow {
                         Color.RED));
                 tris.add(new Triangle(
                         new Vertex(-100,100,-100),
-                        new Vertex(-100,-100,-100),
+                        new Vertex(100,-100,-100),
                         new Vertex(100,100,100),
                         Color.GREEN));
                 tris.add(new Triangle(
@@ -54,25 +54,37 @@ public class GuiWindow {
                         new Vertex(-100,-100,100),
                         Color.BLUE));
 
-                g2.translate(getWidth()/2,getHeight()/2);
-                g2.setColor(Color.WHITE);
+//                g2.translate(getWidth()/2,getHeight()/2);
+//                g2.setColor(Color.WHITE);
 
-                for(Triangle t : tris){
-                    Path2D path = new Path2D.Double();
-                    path.moveTo(t.v1.x,t.v1.y);
-                    path.lineTo(t.v2.x,t.v2.y);
-                    path.lineTo(t.v3.x,t.v3.y);
-                    path.closePath();
-                    g2.draw(path);
-                }
+//                for(Triangle t : tris){
+//                    Path2D path = new Path2D.Double();
+//                    path.moveTo(t.v1.x,t.v1.y);
+//                    path.lineTo(t.v2.x,t.v2.y);
+//                    path.lineTo(t.v3.x,t.v3.y);
+//                    path.closePath();
+//                    g2.draw(path);
+//                }
 
                 double heading = Math.toRadians(headSlider.getValue());
-                Matrix3 transform = new Matrix3(new double[] {
-                        Math.cos(heading),0,-Math.sin(heading),
-                        0,1,0,
-                        Math.sin(heading),0,Math.cos(heading)
-                });
+//                Matrix3 headingTranform = new Matrix3(new double[] {
+//                        Math.cos(heading),0,-Math.sin(heading),
+//                        0,1,0,
+//                        -Math.sin(heading),0,Math.cos(heading)
+//                });
 
+                Matrix3 headingTransform = new Matrix3(new double[] {
+                        Math.cos(heading), 0, Math.sin(heading),
+                        0, 1, 0,
+                        -Math.sin(heading), 0, Math.cos(heading)
+                });
+                double pitch = Math.toRadians(pitchSlider.getValue());
+                Matrix3 pitchTransform = new Matrix3(new double[] {
+                        1, 0, 0,
+                        0, Math.cos(pitch), Math.sin(pitch),
+                        0, -Math.sin(pitch), Math.cos(pitch)
+                });
+                Matrix3 transform = headingTransform.multiply(pitchTransform);
                 g2.translate(getWidth()/2,getHeight()/2);
                 g2.setColor(Color.WHITE);
 
@@ -80,6 +92,7 @@ public class GuiWindow {
                     Vertex v1 = transform.transform(t.v1);
                     Vertex v2 = transform.transform(t.v2);
                     Vertex v3 = transform.transform(t.v3);
+
                     Path2D path = new Path2D.Double();
                     path.moveTo(v1.x,v1.y);
                     path.lineTo(v2.x,v2.y);
@@ -90,6 +103,7 @@ public class GuiWindow {
 
                 headSlider.addChangeListener(e -> renderPanel.repaint());
                 pitchSlider.addChangeListener(e -> renderPanel.repaint());
+
 
             }
         };
