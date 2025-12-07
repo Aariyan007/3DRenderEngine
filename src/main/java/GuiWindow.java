@@ -25,9 +25,14 @@ public class GuiWindow {
                 g2.setColor(Color.BLACK);
                 g2.fillRect(0,0,getWidth(),getHeight());
 
+                //Here the code really starts
+
+
             }
         };
         pane.add(renderPanel,BorderLayout.CENTER);
+
+
 
         frame.setSize(400,400);
         frame.setVisible(true);
