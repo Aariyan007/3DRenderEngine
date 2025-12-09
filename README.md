@@ -17,7 +17,7 @@ You can control the rotation with:
 ---
 
 ## Preview
-![Torus Render](src/java/resource/torus.png)
+![Torus Render](src/main/resources/image.png)
 
 
 
