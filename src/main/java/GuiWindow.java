@@ -35,27 +35,74 @@ public class GuiWindow {
                 g2.fillRect(0,0,getWidth(),getHeight());
 
                 //Here the code really starts
+//                List<Triangle> tris = new ArrayList();
+//                tris.add(new Triangle(
+//                        new Vertex(100,100,100),
+//                        new Vertex(-100,-100,100),
+//                        new Vertex(-100,100,-100),
+//                        Color.WHITE));
+//                tris.add(new Triangle(
+//                        new Vertex(100,100,100),
+//                        new Vertex(-100,-100,100),
+//                        new Vertex(100,-100,-100),
+//                        Color.RED));
+//                tris.add(new Triangle(
+//                        new Vertex(-100,100,-100),
+//                        new Vertex(100,-100,-100),
+//                        new Vertex(100,100,100),
+//                        Color.GREEN));
+//                tris.add(new Triangle(
+//                        new Vertex(-100,100,-100),
+//                        new Vertex(100,-100,-100),
+//                        new Vertex(-100,-100,100),
+//                        Color.BLUE));
+                //Here the code really starts
                 List<Triangle> tris = new ArrayList();
-                tris.add(new Triangle(
-                        new Vertex(100,100,100),
-                        new Vertex(-100,-100,100),
-                        new Vertex(-100,100,-100),
-                        Color.WHITE));
-                tris.add(new Triangle(
-                        new Vertex(100,100,100),
-                        new Vertex(-100,-100,100),
-                        new Vertex(100,-100,-100),
-                        Color.RED));
-                tris.add(new Triangle(
-                        new Vertex(-100,100,-100),
-                        new Vertex(100,-100,-100),
-                        new Vertex(100,100,100),
-                        Color.GREEN));
-                tris.add(new Triangle(
-                        new Vertex(-100,100,-100),
-                        new Vertex(100,-100,-100),
-                        new Vertex(-100,-100,100),
-                        Color.BLUE));
+
+                int majorSegments = 20;
+                int minorSegments = 12;
+                double majorRadius = 120;
+                double minorRadius = 40;
+
+                List<Vertex> vertices = new ArrayList<>();
+
+                for (int i = 0; i < majorSegments; i++) {
+                    double theta = 2 * Math.PI * i / majorSegments;
+
+                    for (int j = 0; j < minorSegments; j++) {
+                        double phi = 2 * Math.PI * j / minorSegments;
+
+                        double x = (majorRadius + minorRadius * Math.cos(phi)) * Math.cos(theta);
+                        double y = minorRadius * Math.sin(phi);
+                        double z = (majorRadius + minorRadius * Math.cos(phi)) * Math.sin(theta);
+
+                        vertices.add(new Vertex(x, y, z));
+                    }
+                }
+
+                for (int i = 0; i < majorSegments; i++) {
+                    for (int j = 0; j < minorSegments; j++) {
+                        int current = i * minorSegments + j;
+                        int next = ((i + 1) % majorSegments) * minorSegments + j;
+                        int currentNext = i * minorSegments + ((j + 1) % minorSegments);
+                        int nextNext = ((i + 1) % majorSegments) * minorSegments + ((j + 1) % minorSegments);
+
+
+                        float hue = (float) i / majorSegments;
+                        Color color = Color.getHSBColor(hue, 0.8f, 0.9f);
+
+                        tris.add(new Triangle(
+                                vertices.get(current),
+                                vertices.get(next),
+                                vertices.get(nextNext),
+                                color));
+                        tris.add(new Triangle(
+                                vertices.get(current),
+                                vertices.get(nextNext),
+                                vertices.get(currentNext),
+                                color));
+                    }
+                }
 
 
 //                g2.translate(getWidth()/2,getHeight()/2);
@@ -97,6 +144,11 @@ public class GuiWindow {
                     Vertex v2 = transform.transform(t.v2);
                     Vertex v3 = transform.transform(t.v3);
 
+                    Triangle transformedTriangle = new Triangle(v1, v2, v3, t.color);
+                    double lightIntensity = transformedTriangle.getLightingIntensity();
+                    Color shadedColor = Triangle.getShade(t.color, lightIntensity);
+
+
                     v1.x += getWidth() / 2;
                     v1.y += getHeight() / 2;
                     v2.x += getWidth() / 2;
@@ -128,11 +180,13 @@ public class GuiWindow {
                                 double depth = b1 * v1.z + b2 * v2.z + b3 * v3.z;
                                 int zIndex = y * img.getWidth() + x;
                                 if (zBuffer[zIndex] < depth) {
-                                    img.setRGB(x, y, t.color.getRGB());
+//                                    img.setRGB(x, y, t.color.getRGB());
+                                    img.setRGB(x, y, shadedColor.getRGB());
                                     zBuffer[zIndex] = depth;
                                 }
                             }
                         }
+
                     }
 
 
