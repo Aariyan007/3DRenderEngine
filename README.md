@@ -17,7 +17,8 @@ You can control the rotation with:
 ---
 
 ## Preview
-https://github.com/user-attachments/assets/e02f4122-cbc5-4d7f-97b3-47ba31192af0
+![Torus Render](src/java/resource/torus.png)
+
 
 
 ---
